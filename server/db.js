@@ -1,10 +1,11 @@
 const mysql = require("mysql2");
+require('dotenv').config({ path: './server/.env' });
 
 // Create a connection pool
 const pool = mysql.createPool({
     host: "localhost",
     user: "root",
-    password: "admin",
+    password: process.env.DB_PW,
     database: 'Awareness',
     waitForConnections: true,
     connectionLimit: 10,

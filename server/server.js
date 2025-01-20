@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
     if (req.session.authenticated) {
         res.sendFile(path.join(__dirname, "files", "HTML", "index.html"));
     } else {
-        res.sendFile(path.join(__dirname, "files", "HTML", "register.html"));
+        res.sendFile(path.join(__dirname, "files", "HTML", "login.html"));
     }
 });
 
@@ -35,8 +35,14 @@ app.post('/register', async (req, res) => {
         const { username, email, password } = req.body;
         if (!password) return res.status(400).json({ message: 'Password is required' });
 
+        // Check if the user already exists
+        const existingUser = await db.findUserByEmail(email);
+        if (existingUser.length > 0) {
+            return res.status(400).json({ message: 'User already exists' });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
-        await db.registerUser(username, email, hashedPassword);  // Use the function from db.js
+        await db.registerUser(username, email, hashedPassword);  
 
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
@@ -44,10 +50,11 @@ app.post('/register', async (req, res) => {
     }
 });
 
+
 app.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        const rows = await db.findUserByEmail(email);  // Use the function from db.js
+        const rows = await db.findUserByEmail(email);  
 
         if (rows.length === 0) return res.status(400).json({ message: 'Invalid Credentials' });
 
@@ -71,7 +78,7 @@ app.post('/login', async (req, res) => {
 app.get('/userinfo', async (req, res) => {
     try {
         const userID = req.session.userId;
-        const rows = await db.getUserById(userID);  // Use the function from db.js
+        const rows = await db.getUserById(userID); 
         if (rows.length === 0) return res.status(404).json({ message: 'User not found' });
 
         res.json({ user: rows[0] });
@@ -89,6 +96,21 @@ app.get('/logout', (req, res) => {
 
 app.get('/register', (req, res) => res.sendFile(path.join(__dirname, "files", "HTML", "register.html")));
 app.get('/login', (req, res) => res.sendFile(path.join(__dirname, "files", "HTML", "login.html")));
+
+app.get('/netflixGame', (req, res) => res.sendFile(path.join(__dirname, "files", "HTML", "netflixGame.html")));
+app.get('/LinkedinGame', (req, res) => res.sendFile(path.join(__dirname, "files", "HTML", "LinkedinGame.html")));
+
+
+app.get('/NetflixFake', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "NetflixFake.html")));
+app.get('/NetflixReal', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "NetflixReal.html")));
+
+
+app.get('/LinkedinReal', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "LinkedinReal.html")));
+app.get('/LinkedinFake', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "LinkedinFake.html")));
+
+
+
+
 
 const port = 3000;
 app.listen(port, () => console.log(`Server running on http://localhost:${port}`));
