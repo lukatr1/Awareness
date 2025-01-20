@@ -108,7 +108,26 @@ app.get('/NetflixReal', (req, res) => res.sendFile(path.join(__dirname, "files",
 app.get('/LinkedinReal', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "LinkedinReal.html")));
 app.get('/LinkedinFake', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "LinkedinFake.html")));
 
+app.post('/vote', async (req, res) => {
+    if (!req.session.authenticated) {
+        return res.status(401).json({ message: 'User not authenticated' });
+    }
 
+    try {
+        const { selectedOption, correctOption } = req.body;
+        const userId = req.session.userId;
+
+        // Check if the answer is correct
+        const isCorrect = selectedOption === correctOption;
+
+        // Update user stats in the database
+        await db.incrementGamesPlayed(userId, isCorrect);
+
+        res.json({ message: isCorrect ? "Correct choice!" : "Wrong choice!" });
+    } catch (error) {
+        res.status(500).json({ message: "Server error" });
+    }
+});
 
 
 

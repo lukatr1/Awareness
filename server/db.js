@@ -48,9 +48,21 @@ const getUserById = async (userID) => {
     }
 };
 
-// Export the functions
+const incrementGamesPlayed = async (userId, isCorrect) => {
+    try {
+        await db.execute(
+            'UPDATE users SET games_played = games_played + 1 WHERE id = ?',
+            [userId]
+        );
+    } catch (error) {
+        throw new Error('Database Error: ' + error.message);
+    }
+};
+
+
 module.exports = {
     registerUser,
     findUserByEmail,
-    getUserById
+    getUserById,
+    incrementGamesPlayed
 };
