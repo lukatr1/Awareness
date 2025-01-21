@@ -104,6 +104,8 @@ app.get('/LinkedinGame', (req, res) => res.sendFile(path.join(__dirname, "files"
 app.get('/NetflixFake', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "NetflixFake.html")));
 app.get('/NetflixReal', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "NetflixReal.html")));
 
+app.get('/revealWon', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "revealWon.html")));
+
 
 app.get('/LinkedinReal', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "LinkedinReal.html")));
 app.get('/LinkedinFake', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "LinkedinFake.html")));
@@ -129,7 +131,40 @@ app.post('/vote', async (req, res) => {
     }
 });
 
+app.post('/revealWon',(req, res) => {
+    const username = req.body.username || "";
+    const password = req.body.password || "";
 
+    req.session.username = username;
+    req.session.password = password;
+
+    res.status(200).set("Content-Type", "text/plain").send("OK");
+    
+});
+
+
+
+app.post('/submit', (req, res) => {
+    const username = req.body.username || "";
+    const password = req.body.password || "";
+
+    req.session.username = username;
+    req.session.password = password;
+
+    //console.log("Username input:", username);
+    //console.log("Password input:", password);
+
+    res.status(200).set("Content-Type", "text/plain").send("OK");
+});
+
+// Serve credentials to the frontend
+app.get('/credentials', (req, res) => {
+    if (req.session.username && req.session.password) {
+        res.json({ username: req.session.username, password: req.session.password });
+    } else {
+        res.json({ username: "N/A", password: "N/A" });
+    }
+});
 
 const port = 3000;
 app.listen(port, () => console.log(`Server running on http://localhost:${port}`));
