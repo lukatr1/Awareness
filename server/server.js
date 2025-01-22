@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(session({
     secret: process.env.AUTH_KEY,
-    cookie: { maxAge: 30000 },
+    cookie: { maxAge: 3000000 },
     saveUninitialized: false,
     resave: true
 }));
@@ -104,6 +104,8 @@ app.get('/LinkedinGame', (req, res) => res.sendFile(path.join(__dirname, "files"
 app.get('/NetflixFake', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "NetflixFake.html")));
 app.get('/NetflixReal', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "NetflixReal.html")));
 
+app.get('/revealWon', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "revealWon.html")));
+
 
 app.get('/LinkedinReal', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "LinkedinReal.html")));
 app.get('/LinkedinFake', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "LinkedinFake.html")));
@@ -129,7 +131,101 @@ app.post('/vote', async (req, res) => {
     }
 });
 
+app.post('/revealWon',(req, res) => {
+    const username = req.body.username || "";
+    const password = req.body.password || "";
 
+    req.session.username = username;
+    req.session.password = password;
+
+    res.status(200).set("Content-Type", "text/plain").send("OK");
+    
+});
+
+/*
+let creds = []
+app.post('/submit', (req, res) => {
+    const username = req.body.username || "";
+    const password = req.body.password || "";
+
+    //console.log("Username input:", username);
+    //console.log("Password input:", password);
+
+    // req.session.username = username;
+    // req.session.password = password;
+
+    creds[0] = username;
+    creds[1] = password;
+
+    console.log(creds[0])
+    console.log(creds[1])
+
+    //res.sendFile(path.join(__dirname, "files", "gameSites", "revealWon.html"));
+    res.status(200).set("Content-Type", "text/plain").send("OK");
+});
+
+*/
+
+
+
+app.post('/submit', (req, res) => {
+    const username1 = req.body.username || "";
+    const password1 = req.body.password || "";
+
+    // Store username and password in session
+    req.session.username = username1;
+    req.session.password = password1;
+
+    console.log(username1)
+    console.log(password1)
+
+    // Save the session explicitly
+    req.session.save(err => {
+        if (err) {
+            console.error("Session save error:", err);
+            return res.status(500).json({ message: "Failed to save session" });
+        }
+
+        // Send response after session is saved
+        res.status(200).set("Content-Type", "text/plain").send("OK");
+    });
+});
+
+
+app.get('/credentials', (req, res) => {
+    console.log("Fetching from session:", req.session.username, req.session.password);
+    res.json({
+        username: req.session.username || "N/A",
+        password: req.session.password || "N/A"
+    });
+});
+
+
+
+/*
+// Serve credentials to the frontend
+app.get('/credentials', (req, res) => {
+    console.log(creds[0])
+    console.log("damny")
+    console.log(creds[1])
+    res.json({
+        username: creds[0] || "N/A",
+        password: creds[1] || "N/A"
+    });
+});
+
+*/
+
+/*
+// Serve credentials to the frontend
+app.get('/credentials', (req, res) => {
+    if (req.session.username && req.session.password) {
+        res.json({ username: req.session.username, password: req.session.password });
+    } else {
+        res.json({ username: "N/A", password: "N/A" });
+    }
+});
+*/
 
 const port = 3000;
 app.listen(port, () => console.log(`Server running on http://localhost:${port}`));
