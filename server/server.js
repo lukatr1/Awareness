@@ -105,6 +105,7 @@ app.get('/NetflixFake', (req, res) => res.sendFile(path.join(__dirname, "files",
 app.get('/NetflixReal', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "NetflixReal.html")));
 
 app.get('/revealWon', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "revealWon.html")));
+app.get('/revealCongrat', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "revealCongrat.html")));
 
 
 app.get('/LinkedinReal', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "LinkedinReal.html")));
