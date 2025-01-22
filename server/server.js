@@ -99,10 +99,12 @@ app.get('/login', (req, res) => res.sendFile(path.join(__dirname, "files", "HTML
 
 app.get('/netflixGame', (req, res) => res.sendFile(path.join(__dirname, "files", "HTML", "netflixGame.html")));
 app.get('/LinkedinGame', (req, res) => res.sendFile(path.join(__dirname, "files", "HTML", "LinkedinGame.html")));
+app.get('/githubGame', (req, res) => res.sendFile(path.join(__dirname, "files", "HTML", "githubGame.html")));
 
 
-app.get('/NetflixFake', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "NetflixFake.html")));
-app.get('/NetflixReal', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "NetflixReal.html")));
+app.get('/githubFake', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "githubFake.html")));
+app.get('/githubReal', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "githubReal.html")));
+//app.get('/NetflixReal', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "NetflixReal.html")));
 
 app.get('/revealWon', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "revealWon.html")));
 app.get('/revealCongrat', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "revealCongrat.html")));
