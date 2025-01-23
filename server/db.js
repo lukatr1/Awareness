@@ -59,10 +59,21 @@ const incrementGamesPlayed = async (userId, isCorrect) => {
     }
 };
 
+// Function to fetch all users
+const getAllUsers = async () => {
+    try {
+        const [rows] = await db.execute('SELECT * FROM users');
+        return rows;
+    } catch (error) {
+        throw new Error('Database Error: ' + error.message);
+    }
+};
+
 
 module.exports = {
     registerUser,
     findUserByEmail,
     getUserById,
-    incrementGamesPlayed
+    incrementGamesPlayed,
+    getAllUsers
 };

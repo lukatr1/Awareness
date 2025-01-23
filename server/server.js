@@ -101,17 +101,19 @@ app.get('/netflixGame', (req, res) => res.sendFile(path.join(__dirname, "files",
 app.get('/LinkedinGame', (req, res) => res.sendFile(path.join(__dirname, "files", "HTML", "LinkedinGame.html")));
 app.get('/githubGame', (req, res) => res.sendFile(path.join(__dirname, "files", "HTML", "githubGame.html")));
 
+app.get('/quiz', (req, res) => res.sendFile(path.join(__dirname, "files", "HTML", "quiz.html")));
 
-app.get('/githubFake', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "githubFake.html")));
-app.get('/githubReal', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "githubReal.html")));
+
+app.get('/githubOpt2', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "githubOpt2.html")));
+app.get('/githubOpt1', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "githubOpt1.html")));
 //app.get('/NetflixReal', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "NetflixReal.html")));
 
 app.get('/revealWon', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "revealWon.html")));
 app.get('/revealCongrat', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "revealCongrat.html")));
 
 
-app.get('/LinkedinReal', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "LinkedinReal.html")));
-app.get('/LinkedinFake', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "LinkedinFake.html")));
+app.get('/LinkedinOpt1', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "LinkedinOpt1.html")));
+app.get('/LinkedinOpt2', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "LinkedinOpt2.html")));
 
 app.post('/vote', async (req, res) => {
     if (!req.session.authenticated) {
@@ -198,32 +200,23 @@ app.get('/credentials', (req, res) => {
     });
 });
 
-
-
-/*
-// Serve credentials to the frontend
-app.get('/credentials', (req, res) => {
-    console.log(creds[0])
-    console.log("damny")
-    console.log(creds[1])
-    res.json({
-        username: creds[0] || "N/A",
-        password: creds[1] || "N/A"
-    });
-});
-
-*/
-
-/*
-// Serve credentials to the frontend
-app.get('/credentials', (req, res) => {
-    if (req.session.username && req.session.password) {
-        res.json({ username: req.session.username, password: req.session.password });
-    } else {
-        res.json({ username: "N/A", password: "N/A" });
+app.get("/getUser", async (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({ message: "User not logged in" });
+    }
+    
+    try {
+        const user = await db.getUserById(req.session.userId);
+        if (user.length === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.json(user[0]); 
+    } catch (error) {
+        res.status(500).json({ message: "Database Error", error: error.message });
     }
 });
-*/
+
+
 
 const port = 3000;
 app.listen(port, () => console.log(`Server running on http://localhost:${port}`));

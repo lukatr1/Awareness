@@ -11,19 +11,83 @@
     <link
       rel="stylesheet"
       href="CSS/index.css" />
+    <script>
+      async function fetchUsers() {
+        try {
+          const response = await fetch("/getUser");
+          const user = await response.json();
+          const tableBody = document.getElementById("user-table-body");
+          tableBody.innerHTML = "";
+
+          const row = `
+            <tr>
+              <td>${user.username}</td>
+              <td>${user.language_preference}</td>
+              <td>${user.games_played}</td>
+              <td>${user.success_rate.toFixed(2)}%</td>
+              <td>${user.failure_rate.toFixed(2)}%</td>
+              <td>${user.average_completion_time.toFixed(2)}s</td>
+            </tr>
+          `;
+          tableBody.innerHTML += row;
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", fetchUsers);
+    </script>
   </head>
   <body>
     <h1>Phishing Awareness Game</h1>
-    <p>Select a Game</p>
-    <a
-      href="/githubGame"
-      class="start-button"
-      >GitHub Game</a
-    >
-    <a
-      href="/LinkedinGame"
-      class="start-button"
-      >LinkedIn Game</a
-    >
+
+    <div class="game-container">
+      <div class="game-info">
+        <p>
+          Test your ability to spot phishing scams! You will be shown two websites: one real and one fake. Your goal is to carefully analyze them and
+          decide which one is safe. If you enter your credentials into the fake website, it will reveal what information was phished. Stay vigilant
+          and learn to protect yourself from online threats!
+        </p>
+      </div>
+
+      <div class="game-options">
+        <h2>Select a Game</h2>
+        <a
+          href="/githubGame"
+          class="start-button"
+          >GitHub Game</a
+        >
+        <a
+          href="/LinkedinGame"
+          class="start-button"
+          >LinkedIn Game</a
+        >
+      </div>
+
+      <div class="game-options">
+        <a
+          href="/quiz"
+          class="start-button2"
+          >Take a Quiz</a
+        >
+      </div>
+
+      <div class="user-table">
+        <h2>User</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Language</th>
+              <th>Games Played</th>
+              <th>Success Rate</th>
+              <th>Failure Rate</th>
+              <th>Avg. Completion Time</th>
+            </tr>
+          </thead>
+          <tbody id="user-table-body"></tbody>
+        </table>
+      </div>
+    </div>
   </body>
 </html>

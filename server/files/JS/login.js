@@ -19,7 +19,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         const result = await response.json();
 
         if (response.ok) {
-            alert('Login successful');
+            //alert('Login successful');
             // Redirect to the index page or any other page after successful login
             window.location.href = '/';
         } else {
