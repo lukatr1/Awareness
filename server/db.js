@@ -12,7 +12,7 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
-// Export the pool with promise support
+// Export the pool
 const db = pool.promise();
 
 // Function to register a user
