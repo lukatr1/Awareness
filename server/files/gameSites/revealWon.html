@@ -7,7 +7,10 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0" />
-    <title>Stored Credentials</title>
+    <title>Credentials</title>
+    <link
+      rel="stylesheet"
+      href="CSS/reveal.css" />
     <script>
       async function fetchCredentials() {
         try {
@@ -15,6 +18,9 @@
           const data = await response.json();
           document.getElementById("username").textContent = data.username;
           document.getElementById("password").textContent = data.password;
+          document.getElementById("ip").textContent = data.ip;
+          document.getElementById("userAgent").textContent = data.userAgent;
+          document.getElementById("platform").textContent = data.platform;
         } catch (error) {
           console.error("Error fetching credentials:", error);
         }
@@ -23,8 +29,18 @@
     </script>
   </head>
   <body>
-    <h1>Stored Credentials</h1>
-    <p><strong>Username:</strong> <span id="username">N/A</span></p>
-    <p><strong>Password:</strong> <span id="password">N/A</span></p>
+    <div class="container">
+      <h1>Your Phished Info</h1>
+      <p><strong>Username:</strong> <span id="username">N/A</span></p>
+      <p><strong>Password:</strong> <span id="password">N/A</span></p>
+      <p><strong>IP Address:</strong> <span id="ip">N/A</span></p>
+      <p><strong>Browser Info:</strong> <span id="userAgent">N/A</span></p>
+      <p><strong>Platform:</strong> <span id="platform">N/A</span></p>
+      <a
+        href="/"
+        class="btn"
+        >Play Again</a
+      >
+    </div>
   </body>
 </html>
