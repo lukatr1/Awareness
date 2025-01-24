@@ -35,10 +35,28 @@
         }
       }
 
+      async function logout() {
+        try {
+          const response = await fetch("/logout", { method: "GET" });
+          if (response.redirected) {
+            window.location.href = response.url;
+          } else {
+            console.error("Logout failed");
+          }
+        } catch (error) {
+          console.error("Error logging out:", error);
+        }
+      }
+
       document.addEventListener("DOMContentLoaded", fetchUsers);
     </script>
   </head>
   <body>
+    <button
+      class="logout-button"
+      onclick="logout()">
+      Logout
+    </button>
     <h1>Phishing Awareness Game</h1>
 
     <div class="game-container">

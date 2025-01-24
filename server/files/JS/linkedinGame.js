@@ -1,3 +1,4 @@
+/*
 document.getElementById("votingForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
@@ -16,3 +17,5 @@ document.getElementById("votingForm").addEventListener("submit", async function 
     document.getElementById("result").textContent = result.message;
     document.getElementById("result").style.color = result.message.includes("Correct") ? "green" : "red";
 });
+
+*/
