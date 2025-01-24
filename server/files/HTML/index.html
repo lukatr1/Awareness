@@ -26,7 +26,9 @@
               <td>${user.games_played}</td>
               <td>${user.success_rate.toFixed(2)}%</td>
               <td>${user.failure_rate.toFixed(2)}%</td>
-              <td>${user.average_completion_time.toFixed(2)}s</td>
+              <td>${
+                user.average_completion_time !== null && user.average_completion_time !== undefined ? user.average_completion_time.toFixed(2) : "N/A"
+              }</td>
             </tr>
           `;
           tableBody.innerHTML += row;

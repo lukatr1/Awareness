@@ -103,6 +103,7 @@ const getAllUsers = async () => {
     }
 };
 
+/*
 // Function to update game start time
 const setGameStartTime = async (userId) => {
     try {
@@ -150,6 +151,64 @@ const setGameEndTime = async (userId) => {
                  games_played = ?
              WHERE id = ?`,
             [newAverageTime, newGamesPlayed, userId]
+        );
+
+        return timeTaken; 
+    } catch (error) {
+        throw new Error('Database Error: ' + error.message);
+    }
+};
+
+*/
+
+let startTime;
+
+const setGameStartTime = () => {
+    startTime = Date.now(); // Store the start time when the game starts
+};
+
+// Method to set game end time and calculate the time taken
+const setGameEndTime = async (userId) => {
+    try {
+        const endTime = Date.now(); 
+        const timeTaken = (endTime - startTime) / 1000; // Time taken in seconds
+
+        // Fetch current game stats from the database
+        const [result] = await db.execute(
+            `SELECT average_completion_time, games_played 
+             FROM users WHERE id = ?`, 
+            [userId]
+        );
+
+        if (result.length === 0) {
+            throw new Error(`No user found with id: ${userId}`);
+        }
+
+        const { average_completion_time, games_played } = result[0];
+
+        const newGamesPlayed = games_played + 1;
+
+        // Check if this is the first game and handle NULL average time
+        let newAverageTime;
+        if (average_completion_time === null) {
+            // If it's the first game, set the average to the time taken
+            newAverageTime = timeTaken;
+        } else {
+            // Calculate the new average time
+            newAverageTime = ((average_completion_time * games_played) + timeTaken) / newGamesPlayed;
+        }
+
+        // Validate the new average time is within a reasonable range
+        if (newAverageTime < 0 || newAverageTime > 86400) { 
+            throw new Error("Calculated average time is out of valid range.");
+        }
+
+        // Update the user's stats with the new average time
+        await db.execute(
+            `UPDATE users 
+             SET average_completion_time = ?
+             WHERE id = ?`, 
+            [newAverageTime, userId]
         );
 
         return timeTaken; 
