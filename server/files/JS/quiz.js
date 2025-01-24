@@ -10,7 +10,7 @@ document.getElementById("check-btn").addEventListener("click", function () {
     let score = 0;
     let feedback = '';
 
-    // Check the user's answers
+    // Check the users answers
     for (let question in answers) {
         let userAnswer = document.querySelector(`input[name="${question}"]:checked`);
 
@@ -31,7 +31,7 @@ document.getElementById("check-btn").addEventListener("click", function () {
         feedbackDiv.innerHTML = `You got ${score} out of 5 questions right.<br>${feedback}`;
     }
 
-    resultDiv.style.display = 'block'; // Show the result section
+    resultDiv.style.display = 'block'; 
 
    
 });
