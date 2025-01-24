@@ -20,10 +20,9 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 
         if (response.ok) {
             //alert('Login successful');
-            // Redirect to the index page or any other page after successful login
             window.location.href = '/';
         } else {
-            // Handle error messages from server, such as incorrect credentials
+            
             alert('Error: ' + result.message);
         }
     } catch (error) {

@@ -48,19 +48,7 @@ const getUserById = async (userID) => {
     }
 };
 
-/*
-const incrementGamesPlayed = async (userId, isCorrect) => {
-    try {
-        await db.execute(
-            'UPDATE users SET games_played = games_played + 1 WHERE id = ?',
-            [userId]
-        );
-    } catch (error) {
-        throw new Error('Database Error: ' + error.message);
-    }
-};
-*/
-
+// increment the Games section
 const incrementGamesPlayed = async (userId, isCorrect) => {
     try {
         await db.execute(
@@ -103,68 +91,11 @@ const getAllUsers = async () => {
     }
 };
 
-/*
-// Function to update game start time
-const setGameStartTime = async (userId) => {
-    try {
-        await db.execute(
-            'UPDATE users SET last_game_start = CURRENT_TIMESTAMP WHERE id = ?',
-            [userId]
-        );
-    } catch (error) {
-        throw new Error('Database Error: ' + error.message);
-    }
-};
-
-// Function to update game end time and return time taken
-const setGameEndTime = async (userId) => {
-    try {
-        await db.execute(
-            'UPDATE users SET last_game_end = CURRENT_TIMESTAMP WHERE id = ?',
-            [userId]
-        );
-
-        // Get time taken for the last game
-        const [result] = await db.execute(
-            `SELECT TIMESTAMPDIFF(SECOND, last_game_start, last_game_end) AS timeTaken, 
-                    average_completion_time, games_played
-             FROM users WHERE id = ?`,
-            [userId]
-        );
-
-        if (result.length === 0) {
-            throw new Error(`No user found with id: ${userId}`);
-        }
-
-        const { timeTaken, average_completion_time, games_played } = result[0];
-
-        if (timeTaken === null) {
-            throw new Error(`Game time could not be calculated for user: ${userId}`);
-        }
-
-        const newGamesPlayed = games_played + 1;
-        const newAverageTime = ((average_completion_time * games_played) + timeTaken) / newGamesPlayed;
-
-        await db.execute(
-            `UPDATE users 
-             SET average_completion_time = ?, 
-                 games_played = ?
-             WHERE id = ?`,
-            [newAverageTime, newGamesPlayed, userId]
-        );
-
-        return timeTaken; 
-    } catch (error) {
-        throw new Error('Database Error: ' + error.message);
-    }
-};
-
-*/
-
+// timing code
 let startTime;
 
 const setGameStartTime = () => {
-    startTime = Date.now(); // Store the start time when the game starts
+    startTime = Date.now(); 
 };
 
 // Method to set game end time and calculate the time taken
@@ -191,19 +122,19 @@ const setGameEndTime = async (userId) => {
         // Check if this is the first game and handle NULL average time
         let newAverageTime;
         if (average_completion_time === null) {
-            // If it's the first game, set the average to the time taken
+            // If its the first game, set the average to the time taken
             newAverageTime = timeTaken;
         } else {
             // Calculate the new average time
             newAverageTime = ((average_completion_time * games_played) + timeTaken) / newGamesPlayed;
         }
 
-        // Validate the new average time is within a reasonable range
+        // validate so its in a reasonable range (24h)
         if (newAverageTime < 0 || newAverageTime > 86400) { 
             throw new Error("Calculated average time is out of valid range.");
         }
 
-        // Update the user's stats with the new average time
+        // Update stats of user
         await db.execute(
             `UPDATE users 
              SET average_completion_time = ?

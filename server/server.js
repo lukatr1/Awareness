@@ -11,6 +11,7 @@ const app = express();
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// initiate session
 app.use(session({
     secret: process.env.AUTH_KEY,
     cookie: { maxAge: 3000000 },
@@ -22,6 +23,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'files', 'HTML'));
 app.use(express.static(__dirname + "/files"));
 
+// Home
 app.get('/', (req, res) => {
     if (req.session.authenticated) {
         res.sendFile(path.join(__dirname, "files", "HTML", "index.html"));
@@ -30,6 +32,7 @@ app.get('/', (req, res) => {
     }
 });
 
+// register
 app.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -40,7 +43,7 @@ app.post('/register', async (req, res) => {
         if (existingUser.length > 0) {
             return res.status(400).json({ message: 'User already exists' });
         }
-
+        // hass pwd
         const hashedPassword = await bcrypt.hash(password, 10);
         await db.registerUser(username, email, hashedPassword);  
 
@@ -75,6 +78,7 @@ app.post('/login', async (req, res) => {
     }
 });
 
+// get all infos from one user
 app.get('/userinfo', async (req, res) => {
     try {
         const userID = req.session.userId;
@@ -87,6 +91,7 @@ app.get('/userinfo', async (req, res) => {
     }
 });
 
+// logout
 app.get('/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) return res.status(500).json({ message: 'Logout failed' });
@@ -96,43 +101,6 @@ app.get('/logout', (req, res) => {
 
 app.get('/register', (req, res) => res.sendFile(path.join(__dirname, "files", "HTML", "register.html")));
 app.get('/login', (req, res) => res.sendFile(path.join(__dirname, "files", "HTML", "login.html")));
-
-
-
-
-
-
-/*
-app.get('/LinkedinGame', async (req, res) => {
-    try {
-        const userId = req.session.userId;
-        if (!userId) return res.status(401).send('Unauthorized');
-
-        await db.setGameStartTime(userId);
-        res.sendFile(path.join(__dirname, "files", "HTML", "LinkedinGame.html"));
-    } catch (error) {
-        res.status(500).send('Database Error: ' + error.message);
-    }
-});
-
-const stopTimerAndUpdateStats = async (req, res, pagePath, wasSuccessful) => {
-    try {
-        const userId = req.session.userId;
-        if (!userId) return res.status(401).send('Unauthorized');
-
-        const timeTaken = await db.setGameEndTime(userId);
-        await db.incrementGamesPlayed(userId);
-
-        // Here, you can also update success/failure rates if needed
-        console.log(`User ${userId} took ${timeTaken} seconds to complete the game.`);
-
-        res.sendFile(path.join(__dirname, "files", "gameSites", pagePath));
-    } catch (error) {
-        res.status(500).send('Database Error: ' + error.message);
-    }
-};
-*/
-
 
 app.get('/revealWon', async (req, res) => {
     try {
@@ -163,18 +131,11 @@ app.get('/revealCongrat', async (req, res) => {
     }
 });
 
-
-
-//app.get('/LinkedinGame', (req, res) => res.sendFile(path.join(__dirname, "files", "HTML", "LinkedinGame.html")));
-
-//app.get('/githubGame', (req, res) => res.sendFile(path.join(__dirname, "files", "HTML", "githubGame.html")));
-
-
 app.get('/LinkedinGame', async (req, res) => {
     const userId = req.session.userId;
     if (!userId) return res.status(401).send('Unauthorized');
 
-    // Set the start time of the game
+    // Set start of time
     db.setGameStartTime(userId);
     
     res.sendFile(path.join(__dirname, "files", "HTML", "LinkedinGame.html"));
@@ -184,90 +145,25 @@ app.get('/githubGame', async (req, res) => {
     const userId = req.session.userId;
     if (!userId) return res.status(401).send('Unauthorized');
     
-    // Set the start time of the game
+    // Set start of time
     db.setGameStartTime(userId);
 
     res.sendFile(path.join(__dirname, "files", "HTML", "githubGame.html"));
 });
 
-/*
-app.get('/revealWon', async (req, res) => {
-    try {
-        const userId = req.session.userId;
-        if (!userId) return res.status(401).send('Unauthorized');
-
-        // Calculate and save the game completion time
-        const timeTaken = await db.setGameStartTime(userId); 
-
-        res.sendFile(path.join(__dirname, "files", "gameSites", "revealWon.html"));
-    } catch (error) {
-        res.status(500).send('Database Error: ' + error.message);
-    }
-});
-
-app.get('/revealCongrat', async (req, res) => {
-    try {
-        const userId = req.session.userId;
-        if (!userId) return res.status(401).send('Unauthorized');
-
-        // Calculate and save the game completion time
-        const timeTaken = await db.setGameEndTime(userId);
-        console.log(timeTaken) 
-
-        res.sendFile(path.join(__dirname, "files", "gameSites", "revealCongrat.html"));
-    } catch (error) {
-        res.status(500).send('Database Error: ' + error.message);
-    }
-});
-*/
-
-
-/*
-app.get('/revealWon', async (req, res) => {
-    try {
-        const userId = req.session.userId;
-        if (!userId) return res.status(401).send('Unauthorized');
-
-        await db.incrementGamesPlayed(userId, false); 
-
-        res.sendFile(path.join(__dirname, "files", "gameSites", "revealWon.html"));
-    } catch (error) {
-        res.status(500).send('Database Error: ' + error.message);
-    }
-});
-
-app.get('/revealCongrat', async (req, res) => {
-    try {
-        const userId = req.session.userId;
-        if (!userId) return res.status(401).send('Unauthorized');
-
-        await db.incrementGamesPlayed(userId, true); 
-        
-        res.sendFile(path.join(__dirname, "files", "gameSites", "revealCongrat.html"));
-    } catch (error) {
-        res.status(500).send('Database Error: ' + error.message);
-    }
-});
-
-*/
-
-
-
-
-
-
-
+// quiz 
 app.get('/quiz', (req, res) => res.sendFile(path.join(__dirname, "files", "HTML", "quiz.html")));
 
-
+// github 
 app.get('/githubOpt2', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "githubOpt2.html")));
 app.get('/githubOpt1', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "githubOpt1.html")));
 
 
 
-
+// linkedin
 app.get('/LinkedinOpt1', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "LinkedinOpt1.html")));
 app.get('/LinkedinOpt2', (req, res) => res.sendFile(path.join(__dirname, "files", "gameSites", "LinkedinOpt2.html")));
+
 
 app.post('/revealWon',(req, res) => {
     const username = req.body.username || "";
@@ -281,9 +177,7 @@ app.post('/revealWon',(req, res) => {
 });
 
 
-
-
-
+// submit
 app.post('/submit', (req, res) => {
     const username1 = req.body.username || "";
     const password1 = req.body.password || "";
@@ -316,12 +210,11 @@ app.post('/submit', (req, res) => {
             return res.status(500).json({ message: "Failed to save session" });
         }
 
-        // Send response after session is saved
         res.status(200).set("Content-Type", "text/plain").send("OK");
     });
 });
 
-
+// in order to fetch after inputting creds
 app.get('/credentials', (req, res) => {
     console.log("Fetching from session:", req.session.username, req.session.password);
     res.json({
@@ -333,6 +226,7 @@ app.get('/credentials', (req, res) => {
     });
 });
 
+// get a user by id
 app.get("/getUser", async (req, res) => {
     if (!req.session.userId) {
         return res.status(401).json({ message: "User not logged in" });
@@ -348,7 +242,6 @@ app.get("/getUser", async (req, res) => {
         res.status(500).json({ message: "Database Error", error: error.message });
     }
 });
-
 
 
 const port = 3000;
